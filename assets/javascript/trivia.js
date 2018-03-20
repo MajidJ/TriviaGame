@@ -1,6 +1,6 @@
 'use strict';
 
-
+//Global variables
 let timer;
 let timeStart = 20;
 let timeLeft = 19;
@@ -43,6 +43,8 @@ answers: ["Ohm", "Mho", "Tesla", "Joule"],
 explain: "Ohm is the unit of electrical resistance."}];
 
 
+// This commented out code was from me trying to get an API call to work with my variables
+
 // let numberOfQuestions = "10";
 // let difficulty = "easy";
 // function setTrivia() {
@@ -62,9 +64,12 @@ explain: "Ohm is the unit of electrical resistance."}];
 //     });
 // };   
 
+// When the page loads 
 $(document).ready(function() {
-    // setTrivia();
+    // Uses randomizeQuestionOrder function to randomize the order of the upcoming questions 
+    // It also makes sure no question is repeated over the course of the game
     triviaQuestionOrder = randomizeQuestionOrder();
+    // Place start button to DOM and starts the game when the button is pressed
     startButton(triviaQuestionOrder);
     $(".timer").text('00:' + timeStart);
     $('.start-button').on('click', function() {
@@ -74,6 +79,27 @@ $(document).ready(function() {
     // End of document ready function
 }); 
 
+// Creates and appends the start button for the game
+const startButton = function() {
+    let startButton = $('<button>');
+    startButton.addClass('start-button btn');
+    startButton.text('Start Game');
+    $('.answers').append(startButton);
+    // End of startButton()
+};
+
+// Similar to the start button but with 'Try Again' button text. To be displayed once the game has finished.
+const tryAgainButton = function() {
+    let startButton = $('<button>');
+    startButton.addClass('start-button btn');
+    startButton.text('Try Again');
+    $('.answers').append(startButton);
+    // End of tryAgainButton()
+};
+
+
+// Starts the timer and checks if the time has run out for that question
+// Note: There is specific DOM text formating for numbers under 10 
 const startTimer = function() {
     timer = setInterval(function() {
         if (timeLeft > 9) {
@@ -94,29 +120,24 @@ const startTimer = function() {
     // End of startTimer() 
 };
 
-const startButton = function() {
-    let startButton = $('<button>');
-    startButton.addClass('start-button btn');
-    startButton.text('Start Game');
-    $('.answers').append(startButton);
-    // End of startButton()
-};
 
-const tryAgainButton = function() {
-    let startButton = $('<button>');
-    startButton.addClass('start-button btn');
-    startButton.text('Try Again');
-    $('.answers').append(startButton);
-    // End of tryAgainButton()
-};
-
+// Trivia game logic for each question that appears
 const nextQuestion = function() {
+    // Resets the timer for the new question
     clearInterval(timer);
     startTimer();
+    // Clears out DOM for new question 
     $('.answers').empty();
+    // triviaQuestionOrder contains the randomized number order that was determined at the start of game 
+    // questionsCompleted keeps track of which question in that order we are currently on
+    // trivia array is what contains all the content of questions and answers
+    // currentTrivia is assigned the specific question and answers that we are currently focused on
     currentTrivia = trivia[triviaQuestionOrder[questionsCompleted]];
+    // currentAnswerChoices is assigned the specific answers to the question we are currently focused on
     let currentAnswerChoices = currentTrivia.answers;
+    // Like how we randomized the question order for the whole game, we are randomizing the answer order within each question
     let answerChoiceOrder = randomizeAnswerChoiceOrder(currentAnswerChoices);
+    // Append question and buttons to the DOM
     $('.question').text(currentTrivia.question);
     for (let i = 0; i < currentAnswerChoices.length; i++) {
         let answerButton = $('<button>');
@@ -125,6 +146,9 @@ const nextQuestion = function() {
         answerButton.text(currentAnswerChoices[answerChoiceOrder[i]]);
         $('.answers').append(answerButton);
     }
+    // Listen for which button is clicked and if the button is the correct answer
+    // Note: all correct answers in the trivia array were at index zero
+    // So if the value of the answer button is zero, we know the correct answer was clicked
     $('.button').on('click', function() {
         if (parseInt($(this).val()) === 0) {
             displayWin();
@@ -136,21 +160,21 @@ const nextQuestion = function() {
 };
 
 
-
-
-
-
-
+// Determine the random order of questions for the entire game. 
+// No number is repeated in this order, therefore no question is repeated in a single game
 const randomizeQuestionOrder = function() {
+    // Creates an array that contains numbers 1 through (the total number of trivia questions)
     let questionNumbers = [];
     for (let i = 0; i < trivia.length; i++) {
         questionNumbers[i] = i;
     }
+    // Shuffles around all the numbers. 
     shuffle(questionNumbers);
     return questionNumbers;
     // End of randomizeQuestionOrder()
 };
 
+// Like how we randomized the question order for the whole game, we are randomizing the answer order within each question
 const randomizeAnswerChoiceOrder = function(currentAnswerChoiceArray) {
     let answerNumbers = [];
     for (let i = 0; i < currentAnswerChoiceArray.length; i++) {
@@ -161,6 +185,7 @@ const randomizeAnswerChoiceOrder = function(currentAnswerChoiceArray) {
     // End of randomizeAnswerChoiceOrder() 
 };
 
+// The page that loads when the player clicks the correct answer
 const displayWin = function() {
     correctAnswers++;
     resetTimer();
@@ -172,6 +197,8 @@ const displayWin = function() {
     // End of displayWin()
 };
 
+
+// The page that loads when the player clicks the incorrect answer
 const displayLoss = function() {
     incorrectAnswers++;
     resetTimer();
@@ -183,6 +210,7 @@ const displayLoss = function() {
     // End of displayLoss()
 };
 
+// The page that loads when the player fails to answer within the time limit
 const displayTimedOutLoss = function() {
     incorrectAnswers++;
     resetTimer();
@@ -194,6 +222,7 @@ const displayTimedOutLoss = function() {
     // End of displayLoss()
 };
 
+// Reset the timer for the new question
 const resetTimer = function() {
     clearInterval(timer);
     $('.timer').text('00:' + timeStart);
@@ -201,6 +230,7 @@ const resetTimer = function() {
     // End of resetTimer()
 }
 
+// Make sure that the next question auto prompts after we display the answer from the previous question
 const progress = function() {
     questionsCompleted++;
     if (questionsCompleted < trivia.length) {
@@ -215,6 +245,7 @@ const progress = function() {
     // End of progress()    
 }
 
+// Final screen that displays with the final score of correct and incorrect answers
 const finalScreen = function() {
     $('.answers').empty();
     $('.question').empty();
@@ -233,6 +264,7 @@ const finalScreen = function() {
 
 
 // Fisher-Yates shuffle function. source: http://sedition.com/perl/javascript-fy.html
+// Moves items around within an array in a manner that doesn't take forever load
 function shuffle(array) {
     let currentIndex = array.length, temporaryValue, randomIndex;
   
