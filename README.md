@@ -1,5 +1,5 @@
-# Crystal Collector
-This is a simple addition game using javascript and jQuery.
+# Science Trivia Game
+This is a simple timed trivia game using javascript and jQuery.
 
 ## Instructions
 1. Game is launched when the 'Start Game' button is clicked.
