@@ -10,4 +10,4 @@ This is a simple timed trivia game using javascript and jQuery.
 6. Game will relaunch when the 'Try Again' button is clicked.
 
 ## Authors
-Majid Jamaleldine [https://github.com/Taxlife/TriviaGame] Working Game: [https://taxlife.github.io/TriviaGame/]
+Majid Jamaleldine [https://github.com/MajidJ/TriviaGame] Working Game: [https://MajidJ.github.io/TriviaGame/]
